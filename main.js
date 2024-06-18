@@ -157,12 +157,22 @@ async function main() {
 
                                 const artifact = artifacts.find((artifact) => {
                                     if (nameIsRegExp) {
-                                        return artifact.name.match(name) !== null
+                                        if (artifact.name.match(name) !== null) {
+                                            found = true;
+                                            finshed = true;
+                                            return;
+                                        }
                                     }
-                                    return artifact.name == name
+                                    if (artifact.name == name)
+                                    {
+                                        found = true;
+                                        finshed = true;
+                                        return;
+                                    }
                                 })
                                 if (!artifact) {
                                     if (workflowConclusion && (workflowConclusion == 'in_progress') && wait) {
+                                        core.info(`==> (in progress) Waiting for artifacts to be available`)
                                         setTimeout(cb, 5000)
                                     } else {
                                         finshed = true;
