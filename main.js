@@ -215,8 +215,7 @@ async function main() {
             if (workflowConclusion && (workflowConclusion == 'in_progress') && artifacts.length == 0) {
                 core.setOutput("dry_run", true)
                 core.setOutput("found_artifact", false)
-            }
-            if (artifacts.length == 0) {
+            } else if (artifacts.length == 0) {
                 core.setOutput("dry_run", false)
                 core.setOutput("found_artifact", false)
                 return
