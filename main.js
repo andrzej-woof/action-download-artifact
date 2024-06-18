@@ -38,6 +38,7 @@ async function main() {
         const skipUnpack = core.getBooleanInput("skip_unpack")
         const ifNoArtifactFound = core.getInput("if_no_artifact_found")
         let workflow = core.getInput("workflow")
+        let wait = core.getBooleanInput("wait")
         let workflowSearch = core.getBooleanInput("workflow_search")
         let workflowConclusion = core.getInput("workflow_conclusion")
         let pr = core.getInput("pr")
@@ -145,13 +146,33 @@ async function main() {
                             continue
                         }
                         if (searchArtifacts) {
-                            const artifact = artifacts.find((artifact) => {
-                                if (nameIsRegExp) {
-                                    return artifact.name.match(name) !== null
+                            let found = false;
+                            let finished = false;
+                            const cb = () => {
+                                const artifact = artifacts.find((artifact) => {
+                                    if (nameIsRegExp) {
+                                        return artifact.name.match(name) !== null
+                                    }
+                                    return artifact.name == name
+                                })
+                                if (!artifact) {
+                                    if (workflowConclusion && (workflowConclusion == 'in_progress') && wait) {
+                                        setTimeout(cb, 5000)
+                                    } else {
+                                        finshed = true;
+                                        return;
+                                    }
+                                } else {
+                                    found = true;
+                                    finshed = true;
+                                    return;
                                 }
-                                return artifact.name == name
-                            })
-                            if (!artifact) {
+                            }
+                            cb();
+                            while (!finished) {
+
+                            }
+                            if (!found) {
                                 continue
                             }
                         }
