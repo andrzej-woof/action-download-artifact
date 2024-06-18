@@ -157,23 +157,15 @@ async function main() {
 
                                 const artifact = artifacts.find((artifact) => {
                                     if (nameIsRegExp) {
-                                        if (artifact.name.match(name) !== null) {
-                                            found = true;
-                                            finshed = true;
-                                            return;
-                                        }
+                                        return artifact.name.match(name) !== null;
                                     }
-                                    if (artifact.name == name)
-                                    {
-                                        found = true;
-                                        finshed = true;
-                                        return;
-                                    }
+                                    return artifact.name == name;
                                 })
                                 if (!artifact) {
                                     if (workflowConclusion && (workflowConclusion == 'in_progress') && wait) {
                                         core.info(`==> (in progress) Waiting for artifacts to be available`)
-                                        setTimeout(cb, 5000)
+                                        await (new Promise(resolve => setTimeout(resolve, 5000)))
+                                        return;
                                     } else {
                                         finshed = true;
                                         return;
@@ -184,9 +176,9 @@ async function main() {
                                     return;
                                 }
                             }
-                            cb();
                             while (!finished) {
-
+                                core.info(`==> (in progress) Looping waiting for artifacts to be available`)
+                                await cb();
                             }
                             if (!found) {
                                 continue
