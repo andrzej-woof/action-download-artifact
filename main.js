@@ -34,7 +34,6 @@ async function main() {
         const [owner, repo] = core.getInput("repo", { required: true }).split("/")
         const path = core.getInput("path", { required: true })
         const name = core.getInput("name")
-        const wait = core.getBooleanInput("wait")
         const nameIsRegExp = core.getBooleanInput("name_is_regexp")
         const skipUnpack = core.getBooleanInput("skip_unpack")
         const ifNoArtifactFound = core.getInput("if_no_artifact_found")
@@ -213,6 +212,10 @@ async function main() {
         core.setOutput("artifacts", artifacts)
 
         if (dryRun) {
+            if (workflowConclusion && (workflowConclusion == 'in_progress') && artifacts.length == 0) {
+                core.setOutput("dry_run", true)
+                core.setOutput("found_artifact", false)
+            }
             if (artifacts.length == 0) {
                 core.setOutput("dry_run", false)
                 core.setOutput("found_artifact", false)

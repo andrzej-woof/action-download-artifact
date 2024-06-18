@@ -29,11 +29,6 @@ inputs:
       https://docs.github.com/de/rest/actions/workflow-runs?apiVersion=2022-11-28#list-workflow-runs-for-a-workflow
     required: false
     default: success
-  wait:
-    description: |
-      Wait for the workflow to finish
-    required: false
-    default: false
   repo:
     description: Repository name with owner (like actions/checkout)
     required: false
