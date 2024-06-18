@@ -148,7 +148,13 @@ async function main() {
                         if (searchArtifacts) {
                             let found = false;
                             let finished = false;
-                            const cb = () => {
+                            const cb = async () => {
+                                let artifacts = await client.paginate(client.rest.actions.listWorkflowRunArtifacts, {
+                                    owner: owner,
+                                    repo: repo,
+                                    run_id: run.id,
+                                })
+
                                 const artifact = artifacts.find((artifact) => {
                                     if (nameIsRegExp) {
                                         return artifact.name.match(name) !== null
