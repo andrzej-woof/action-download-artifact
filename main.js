@@ -163,16 +163,16 @@ async function main() {
                                 })
                                 if (!artifact) {
                                     if (workflowConclusion && (workflowConclusion == 'in_progress') && wait) {
-                                        core.info(`==> (in progress) Waiting for artifacts to be available`)
+                                        core.info(`==> (in progress) Not found yet waiting 5 seconds`)
                                         await (new Promise(resolve => setTimeout(resolve, 5000)))
                                         return;
                                     } else {
-                                        finshed = true;
+                                        finished = true;
                                         return;
                                     }
                                 } else {
                                     found = true;
-                                    finshed = true;
+                                    finished = true;
                                     return;
                                 }
                             }
