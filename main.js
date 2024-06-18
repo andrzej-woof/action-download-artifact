@@ -119,6 +119,8 @@ async function main() {
             for await (const runs of client.paginate.iterator(runGetter, {
                 owner: owner,
                 repo: repo,
+                sort: 'created',
+                direction: 'desc',
                 ...(workflow ? { workflow_id: workflow } : {}),
                 ...(branch ? { branch } : {}),
                 ...(event ? { event } : {}),
