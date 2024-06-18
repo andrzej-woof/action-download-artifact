@@ -142,7 +142,7 @@ async function main() {
                             repo: repo,
                             run_id: run.id,
                         })
-                        if (!artifacts || artifacts.length == 0) {
+                        if (!artifacts || artifacts.length == 0 && !(workflowConclusion && (workflowConclusion == 'in_progress') && wait)) {
                             continue
                         }
                         if (searchArtifacts) {
