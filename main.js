@@ -19,8 +19,17 @@ async function downloadAction(name, path) {
     core.setOutput("found_artifact", true)
 }
 
+async function getRun(client, owner, repo, runID) {
+  const run = await client.rest.actions.getWorkflowRun({
+      owner: owner,
+      repo: repo,
+      run_id: runID || github.context.runId,
+  })
+  return run
+}
+
 async function getWorkflow(client, owner, repo, runID) {
-    const run = await client.rest.actions.getWorkflowRun({
+    const run = await getRun({
         owner: owner,
         repo: repo,
         run_id: runID || github.context.runId,
@@ -221,6 +230,19 @@ async function main() {
             } catch (error) {
                 return setExitMessage(ifNoArtifactFound, "no matching artifact in this workflow?")
             }
+        }
+
+        let run = await getRun(client, owner, repo, runID);
+        if (wait && run.status == 'in_progress')  {
+          for (let counter = 0; conter < 60; counter++) {
+            run = await getRun(client, owner, repo, runID);
+            if (run.status != 'in_progress') {
+              core.info(`==> (completed) Workflow run completed`)
+              break;
+            }
+            core.info(`==> (in progress) Waiting 5 seconds to finish`)
+            await (new Promise(resolve => setTimeout(resolve, 5000)))
+          }
         }
 
         let artifacts = await client.paginate(client.rest.actions.listWorkflowRunArtifacts, {
