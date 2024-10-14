@@ -150,6 +150,7 @@ async function main() {
                         if (searchArtifacts) {
                             let found = false;
                             let finished = false;
+                            let failSafe = 0;
                             const cb = async () => {
                                 let artifacts = await client.paginate(client.rest.actions.listWorkflowRunArtifacts, {
                                     owner: owner,
@@ -165,6 +166,12 @@ async function main() {
                                 })
                                 if (!artifact) {
                                     if (workflowConclusion && (workflowConclusion == 'in_progress') && wait) {
+                                        failSafe++;
+                                        if (failSafe > 60) {
+                                          core.info(`==> (in progress) Timeout reached waiting for artifacts to be available`)
+                                          finished = true;
+                                          return;  
+                                        }
                                         core.info(`==> (in progress) Not found yet waiting 5 seconds`)
                                         await (new Promise(resolve => setTimeout(resolve, 5000)))
                                         return;
